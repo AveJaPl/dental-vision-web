@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+@layer base {
+  :root {
+    --background: 240 10% 85%; /* Ciemniejsze szaro-niebieskie tło */
+    --foreground: 240 10% 15%; /* Grafitowy tekst */
+    --card: 240 12% 80%; /* Przyciemnione szare tło kart */
+    --card-foreground: 240 10% 15%;
+    --popover: 240 12% 80%; /* Subtelnie ciemniejsze tło */
+    --popover-foreground: 240 10% 15%;
+    --primary: 205 80% 45%; /* Spójny niebieski taki jak w dark mode */
+    --primary-foreground: 210 40% 95%; /* Jasny tekst */
+    --secondary: 240 10% 70%; /* Głębszy, neutralny szary */
+    --secondary-foreground: 240 10% 20%;
+    --muted: 240 10% 65%; /* Przygaszone tło z domieszką szarości */
+    --muted-foreground: 240 10% 35%; /* Szary tekst */
+    --accent: 205 80% 45%; /* Taki sam jak primary */
+    --accent-foreground: 210 40% 95%;
+    --destructive: 0 70% 45%; /* Stonowana czerwień */
+    --destructive-foreground: 210 40% 95%;
+    --border: 240 10% 60%; /* Ciemniejsze obramowanie */
+    --input: 240 10% 60%;
+    --ring: 205 80% 45%; /* Spójny z primary */
+    --radius: 0.5rem;
+    --sidebar-background: 240 10% 82%; /* Przyciemnione tło sidebar */
+    --sidebar-foreground: 240 10% 20%;
+    --sidebar-primary: 205 80% 45%;
+    --sidebar-primary-foreground: 210 40% 95%;
+    --sidebar-accent: 205 80% 45%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 240 10% 60%;
+    --sidebar-ring: 205 80% 45%;
+  }
+
+  .dark {
+    --background: 240 15% 10%; /* Dark mode pozostaje bez zmian */
+    --foreground: 210 40% 95%;
+    --card: 240 20% 12%;
+    --card-foreground: 210 40% 95%;
+    --popover: 240 20% 12%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 205 80% 45%; /* Spójny niebieski */
+    --primary-foreground: 240 10% 12%;
+    --secondary: 240 15% 20%;
+    --secondary-foreground: 210 40% 95%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 205 70% 45%;
+    --accent-foreground: 210 40% 95%;
+    --destructive: 0 65% 40%;
+    --destructive-foreground: 210 40% 95%;
+    --border: 240 15% 20%;
+    --input: 240 15% 20%;
+    --ring: 205 80% 45%;
+    --sidebar-background: 240 15% 10%;
+    --sidebar-foreground: 210 40% 95%;
+    --sidebar-primary: 205 80% 45%;
+    --sidebar-primary-foreground: 240 10% 12%;
+    --sidebar-accent: 205 70% 45%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 240 15% 20%;
+    --sidebar-ring: 205 80% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
