@@ -16,12 +16,12 @@ export default function NotFoundPage() {
           track!
         </p>
         <div className="flex justify-between space-x-4">
-          <Link href="/" className="w-2/3">
+          <Link href="/" className="w-1/3">
             <Button className="w-full text-foreground">Go to Homepage</Button>
           </Link>
-          <Link href="/login" className="w-1/3">
+          <Link href="/dashboard" className="w-2/3">
             <Button variant="outline" className="w-full">
-              Go to Login
+              Go to Dashboard
             </Button>
           </Link>
         </div>
