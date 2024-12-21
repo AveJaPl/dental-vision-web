@@ -5,17 +5,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
-interface LoginResponse {
-  message?: string;
-  token?: string;
-}
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,18 +22,22 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://localhost:3000/auth/local", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // <--- kluczowe, aby cookie z JWT zostało zapisane
         body: JSON.stringify({ email, password }),
       });
 
-      const data: LoginResponse = await response.json();
+      if (!response.ok) {
+        // jeśli status != 2xx
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Błąd logowania");
+      }
 
-      if (!response.ok) throw new Error(data.message || "Błąd logowania");
-
-      alert("Logowanie udane!");
-      // Możesz tutaj zapisać token do localStorage lub zarządzać sesją
+      // Nie zapisujemy tokena w localStorage, bo jest w HttpOnly cookie
+      // Wystarczy np. przekierować użytkownika na stronę po zalogowaniu:
+      router.push("/dashboard");
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -42,8 +45,9 @@ export default function LoginPage() {
     }
   };
 
+  // Logowanie przez OAuth (Google, Facebook, Apple)
   const handleOAuth = (provider: string) => {
-    window.location.href = `http://localhost:5000/api/auth/${provider}`;
+    window.location.href = `http://localhost:3000/auth/${provider}`;
   };
 
   return (
@@ -54,6 +58,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           {error && <p className="text-red-500 text-center">{error}</p>}
+
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
               type="email"
@@ -69,11 +74,13 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full text-foreground" disabled={loading}>
               {loading ? "Logowanie..." : "Zaloguj się"}
             </Button>
           </form>
+
           <div className="my-4 text-center text-sm text-gray-500">lub</div>
+
           <div className="space-y-2">
             <Button
               variant="outline"
@@ -97,6 +104,7 @@ export default function LoginPage() {
               Zaloguj przez Apple
             </Button>
           </div>
+
           <div className="mt-4 text-center text-sm">
             <Link href="/register" className="underline">
               Zarejestruj się

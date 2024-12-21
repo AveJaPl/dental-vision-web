@@ -1,10 +1,16 @@
+"use client";
+import Link from "next/link";
+
 export default function Home() {
+
   return (
     <div className="container mx-auto">
-      <h1 className="text-4xl font-bold text-center">Hello, world!</h1>
-      <p className="text-lg text-center">
-        This is a Next.js app with Tailwind CSS.
-      </p>
+      <h1 className="text-4xl text-center mt-8">Welcome to Next.js</h1>
+      <div className="text-center mt-4">
+        <Link href="/login" className="text-blue-500">
+          Login
+        </Link>
+      </div>
     </div>
   );
 }

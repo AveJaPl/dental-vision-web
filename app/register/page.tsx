@@ -5,12 +5,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
@@ -18,15 +22,20 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
+      const response = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // <--- także "include", żeby zapisać cookie
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) throw new Error("Błąd rejestracji");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Błąd rejestracji");
+      }
 
-      alert("Rejestracja zakończona sukcesem!");
+      // Jeżeli backend ustawia cookie -> użytkownik jest już zalogowany
+      router.push("/dashboard")
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -42,6 +51,7 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent>
           {error && <p className="text-red-500 text-center">{error}</p>}
+          
           <form onSubmit={handleRegister} className="space-y-4">
             <Input
               type="email"
@@ -57,10 +67,11 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full text-foreground" disabled={loading}>
               {loading ? "Rejestracja..." : "Zarejestruj się"}
             </Button>
           </form>
+
           <div className="mt-4 text-center text-sm">
             Masz już konto?{" "}
             <Link href="/login" className="underline">
