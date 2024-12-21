@@ -40,9 +40,9 @@ body {
   .dark {
     --background: 240 15% 10%; /* Dark mode pozostaje bez zmian */
     --foreground: 210 40% 95%;
-    --card: 240 20% 12%;
+    --card: 240 15% 10%; /* Jaśniejszy od background, ale ciemniejszy od popover */
+    --popover: 240 15% 18%; /* Jaśniejszy od card, ale dalej w tonacji dark */
     --card-foreground: 210 40% 95%;
-    --popover: 240 20% 12%;
     --popover-foreground: 210 40% 95%;
     --primary: 205 80% 45%; /* Spójny niebieski */
     --primary-foreground: 240 10% 12%;
