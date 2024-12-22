@@ -52,7 +52,7 @@ export default function ChatLayout() {
     const filesArray = Array.from(e.target.files);
     setSelectedFiles((prev) => [...prev, ...filesArray]);
 
-    // Resetujemy input, aby móc wybrać ten sam plik ponownie
+    // Reset input, so we can choose the same file again if needed
     e.target.value = "";
   }
 
@@ -142,7 +142,9 @@ export default function ChatLayout() {
       <Card className="relative w-full max-w-2xl h-[calc(100vh-80px)] flex flex-col shadow-md rounded-lg">
         {/* Górny pasek z przyciskiem wyczyszczenia chatu */}
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="font-semibold text-lg text-foreground">Diagnoza online</h2>
+          <h2 className="font-semibold text-lg text-foreground">
+            Diagnoza online
+          </h2>
           <Button variant="ghost" onClick={clearChat}>
             Wyczyść chat
           </Button>
@@ -255,6 +257,7 @@ export default function ChatLayout() {
 
           <div className="flex items-center space-x-3">
             <div className="flex-1">
+              {/* Ustawiamy text-base, aby zapobiec przybliżaniu na iOS */}
               <Textarea
                 placeholder="Napisz wiadomość..."
                 value={textInput}
@@ -265,7 +268,7 @@ export default function ChatLayout() {
                     handleSend();
                   }
                 }}
-                className="text-sm md:text-base resize-none"
+                className="text-base resize-none"
                 rows={1}
               />
             </div>
