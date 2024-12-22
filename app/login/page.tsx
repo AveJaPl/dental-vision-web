@@ -29,11 +29,11 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        // jeśli status != 2xx
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Błąd logowania");
-      }
+      // if (!response.ok) {
+      //   // jeśli status != 2xx
+      //   const errorData = await response.json();
+      //   throw new Error(errorData.message || "Błąd logowania");
+      // }
 
       // Nie zapisujemy tokena w localStorage, bo jest w HttpOnly cookie
       // Wystarczy np. przekierować użytkownika na stronę po zalogowaniu:
