@@ -22,12 +22,12 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/local", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // <--- kluczowe, aby cookie z JWT zostało zapisane
-        body: JSON.stringify({ email, password }),
-      });
+      // const response = await fetch("http://localhost:3000/auth/local", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   credentials: "include", // <--- kluczowe, aby cookie z JWT zostało zapisane
+      //   body: JSON.stringify({ email, password }),
+      // });
 
       // if (!response.ok) {
       //   // jeśli status != 2xx
