@@ -1,7 +1,18 @@
 import { FaTooth } from "react-icons/fa"; // Import ikony z react-icons
 import { FolderSearch, Users, Settings, CreditCard } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { ModeToggle } from "./theme-toggler";
+import Logout from "./logout";
+import Link from "next/link";
 
 const menuItems = [
   {
@@ -45,17 +56,21 @@ export function DentalAssistantSidebar() {
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <a href={item.url} className="flex items-center space-x-3 p-2 rounded-md">
+                  <Link
+                    href={item.url}
+                    className="flex items-center space-x-3 p-2 rounded-md"
+                  >
                     <item.icon className="w-5 h-5" />
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="flex flex-row justify-between p-4 items-center">
+        <Logout />
         <ModeToggle />
       </SidebarFooter>
     </Sidebar>
