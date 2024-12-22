@@ -7,7 +7,7 @@ const menuItems = [
   {
     title: "Dashboard",
     icon: FaTooth, // Ikona z react-icons
-    url: "/",
+    url: "/dashboard",
   },
   {
     title: "Patient Cases",
