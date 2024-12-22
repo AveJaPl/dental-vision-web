@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 // Lista publicznych ścieżek
 const unsignedPaths = ["/login", "/register"];
-const publicPaths = ["/", ...unsignedPaths]
+// const publicPaths = ["/", ...unsignedPaths];
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
@@ -16,9 +16,9 @@ export function middleware(req: NextRequest) {
   }
 
   // Jeśli użytkownik nie ma tokena i wchodzi na stronę chronioną → redirect do /login
-  if (!token && !publicPaths.includes(pathname)) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  // if (!token && !publicPaths.includes(pathname)) {
+  //   return NextResponse.redirect(new URL("/login", req.url));
+  // }
 
   // W innych przypadkach kontynuujemy
   return NextResponse.next();
