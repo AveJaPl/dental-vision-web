@@ -43,7 +43,7 @@ export default function LandingPage() {
       {/* Main Content */}
       <div className="flex flex-col items-center space-y-6 max-w-md text-center">
         <h2 className="text-xl font-semibold tracking-tigh">
-          Let's get started!
+          Let&apos;s get started!
         </h2>
         <p className="text-base text-muted-foreground leading-relaxed">
           Login to explore our features <br></br> and take control of your dental health.
