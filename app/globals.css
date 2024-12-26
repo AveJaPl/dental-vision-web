@@ -3,80 +3,136 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
+
 @layer base {
   :root {
-    --background: 240 10% 85%; /* Ciemniejsze szaro-niebieskie tło */
-    --foreground: 240 10% 15%; /* Grafitowy tekst */
-    --card: 240 12% 80%; /* Przyciemnione szare tło kart */
-    --card-foreground: 240 10% 15%;
-    --popover: 240 12% 80%; /* Subtelnie ciemniejsze tło */
-    --popover-foreground: 240 10% 15%;
-    --primary: 205 80% 45%; /* Spójny niebieski taki jak w dark mode */
-    --primary-foreground: 210 40% 95%; /* Jasny tekst */
-    --secondary: 240 10% 70%; /* Głębszy, neutralny szary */
-    --secondary-foreground: 240 10% 20%;
-    --muted: 240 10% 65%; /* Przygaszone tło z domieszką szarości */
-    --muted-foreground: 240 10% 35%; /* Szary tekst */
-    --accent: 205 80% 45%; /* Taki sam jak primary */
-    --accent-foreground: 210 40% 95%;
-    --destructive: 0 70% 45%; /* Stonowana czerwień */
-    --destructive-foreground: 210 40% 95%;
-    --border: 240 10% 60%; /* Ciemniejsze obramowanie */
-    --input: 240 10% 60%;
-    --ring: 205 80% 45%; /* Spójny z primary */
+    /* Main Colors */
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 11%; /* Dark Navy */
+
+    /* Metaliczny Srebrny */
+    --card: 0 0% 75%;
+    --card-foreground: 0 0% 11%;
+    --popover: 0 0% 75%;
+    --popover-foreground: 0 0% 11%;
+
+    /* Technologiczny Niebieski */
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Jasny Błękit */
+    --secondary: 197 100% 82%;
+    --secondary-foreground: 0 0% 11%;
+
+    /* Muted */
+    --muted: 0 0% 75%;
+    --muted-foreground: 0 0% 11%;
+
+    /* Accent (Technologiczny Niebieski) */
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Delicate Red (If Needed) */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders, Inputs, Rings */
+    --border: 0 0% 75%;
+    --input: 0 0% 100%;
+    --ring: 210 100% 50%;
+
+    /* Radius */
     --radius: 0.5rem;
-    --sidebar-background: 240 10% 82%; /* Przyciemnione tło sidebar */
-    --sidebar-foreground: 240 10% 20%;
-    --sidebar-primary: 205 80% 45%;
-    --sidebar-primary-foreground: 210 40% 95%;
-    --sidebar-accent: 205 80% 45%;
-    --sidebar-accent-foreground: 210 40% 95%;
-    --sidebar-border: 240 10% 60%;
-    --sidebar-ring: 205 80% 45%;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 75%;
+    --sidebar-foreground: 0 0% 11%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 100% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 75%;
+    --sidebar-ring: 210 100% 50%;
   }
 
+  /* Dark Mode */
   .dark {
-    --background: 240 15% 10%; /* Dark mode pozostaje bez zmian */
-    --foreground: 210 40% 95%;
-    --card: 240 15% 10%; /* Jaśniejszy od background, ale ciemniejszy od popover */
-    --popover: 240 15% 18%; /* Jaśniejszy od card, ale dalej w tonacji dark */
-    --card-foreground: 210 40% 95%;
-    --popover-foreground: 210 40% 95%;
-    --primary: 205 80% 45%; /* Spójny niebieski */
-    --primary-foreground: 240 10% 12%;
-    --secondary: 240 15% 20%;
-    --secondary-foreground: 210 40% 95%;
-    --muted: 240 10% 15%;
-    --muted-foreground: 210 15% 60%;
-    --accent: 205 70% 45%;
-    --accent-foreground: 210 40% 95%;
-    --destructive: 0 65% 40%;
-    --destructive-foreground: 210 40% 95%;
-    --border: 240 15% 20%;
-    --input: 240 15% 20%;
-    --ring: 205 80% 45%;
-    --sidebar-background: 240 15% 10%;
-    --sidebar-foreground: 210 40% 95%;
-    --sidebar-primary: 205 80% 45%;
-    --sidebar-primary-foreground: 240 10% 12%;
-    --sidebar-accent: 205 70% 45%;
-    --sidebar-accent-foreground: 210 40% 95%;
-    --sidebar-border: 240 15% 20%;
-    --sidebar-ring: 205 80% 45%;
+    --background: 0 0% 11%; /* Dark Navy */
+    --foreground: 0 0% 100%; /* White */
+
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 18%; /* Adjusted darker shade */
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 197 100% 82%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 18%; /* Dark muted */
+    --muted-foreground: 197 100% 82%; /* Light blue contrast */
+
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 210 100% 50%;
+
+    --sidebar-background: 0 0% 11%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 100% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 210 100% 50%;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Style dla fontów */
+body {
+  @apply bg-background text-foreground font-sans;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+}
+
+p,
+span,
+li,
+a {
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+}
+
+small {
+  font-family: "Roboto Condensed", sans-serif;
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+/* Ikony i styl dodatkowy */
+.icon {
+  font-family: "Montserrat", sans-serif;
+  color: var(--primary);
+}
+
+/* Styl scrollbara */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: var(--primary) var(--background);

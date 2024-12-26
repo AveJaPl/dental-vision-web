@@ -3,40 +3,48 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaGoogle, FaApple, FaFacebook, FaArrowLeft, FaCheck } from "react-icons/fa";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
-  const handleLogin = async (e: FormEvent) => {
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
-      // Mock logowanie - zastąp prawdziwym API
+      const response = await fetch("http://localhost:3000/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
       router.push("/dashboard");
     } catch (err) {
-      console.error("Login failed", err);
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleOAuth = (provider: string) => {
-    window.location.href = `http://localhost:3000/auth/${provider}`;
   };
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  
 
   return (
     <div className="flex h-screen justify-center px-4">
@@ -46,11 +54,15 @@ export default function LoginPage() {
           <Link href="/">
             <FaArrowLeft className="text-muted-foreground" />
           </Link>
-          <h1 className="w-full text-center text-xl font-bold">Login</h1>
+          <h1 className="w-full text-center text-xl font-bold">Sign Up</h1>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border">
+        {error && (
+          <p className="text-red-500 text-center mb-4">{error}</p>
+        )}
+
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
             <FiMail className="text-muted-foreground mr-3" />
             <input
               type="email"
@@ -60,9 +72,9 @@ export default function LoginPage() {
               required
               className="w-full bg-transparent focus:outline-none text-foreground placeholder-muted-foreground"
             />
-            {
-              isValidEmail(email) && <FaCheck className="text-primary" />
-            }
+            {isValidEmail(email) && (
+              <FaCheck className="text-primary" />
+            )}
           </div>
 
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
@@ -84,12 +96,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="text-right">
-            <Link href="/forgot-password" className="text-primary text-sm">
-              Forgot Password?
-            </Link>
-          </div>
-
           <button
             type="submit"
             className={`w-full py-3 rounded-full bg-primary text-primary-foreground font-semibold text-center transition ${
@@ -97,51 +103,15 @@ export default function LoginPage() {
             }`}
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Registering..." : "Sign Up"}
           </button>
         </form>
 
         <div className="text-center text-sm text-muted-foreground mt-6">
-          Don’t have an account?{" "}
-          <Link href="/signup" className="text-primary font-medium">
-            Sign Up
+          Already have an account?{" "}
+          <Link href="/login" className="text-primary font-medium">
+            Log In
           </Link>
-        </div>
-
-        <div className="my-6 text-center text-muted-foreground text-sm">OR</div>
-
-        <div className="space-y-3">
-          <button
-            onClick={() => handleOAuth("google")}
-            className="flex items-center p-4 w-full py-3 border border-border rounded-full bg-input text-foreground hover:bg-secondary/10 transition hover:outline-2 hover:border-primary"
-          >
-            <FaGoogle className="text-muted-foreground mr-2" />
-            <p className="w-full text-muted-foreground text-sm">
-              Sign in with Google
-            </p>
-          </button>
-
-          <button
-            onClick={() => handleOAuth("apple")}
-            className="flex items-center p-4 justify-center w-full py-3 
-            border border-border rounded-full bg-input text-foreground hover:bg-secondary/10 transition hover:outline-2 hover:border-primary"
-          >
-            <FaApple className="text-muted-foreground mr-2 text-xl" />
-            <p className="w-full text-muted-foreground text-sm">
-              Sign in with Apple
-            </p>
-          </button>
-
-          <button
-            onClick={() => handleOAuth("facebook")}
-            className="flex items-center p-4 justify-center w-full py-3 
-            border border-border rounded-full bg-input text-foreground hover:bg-secondary/10 transition hover:outline-2 hover:border-primary"
-          >
-            <FaFacebook className="text-muted-foreground mr-2 text-lg" />
-            <p className="w-full text-muted-foreground text-sm">
-              Sign in with Facebook
-            </p>
-          </button>
         </div>
       </div>
     </div>

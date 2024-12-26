@@ -33,7 +33,6 @@ export default function ChatLayout() {
   const chatRef = useRef<HTMLDivElement>(null);
 
   // --- UTILS ---
-
   function getFormattedTime() {
     const date = new Date();
     const hours = date.getHours().toString().padStart(2, "0");
@@ -46,13 +45,10 @@ export default function ChatLayout() {
   }
 
   // --- HANDLERS ---
-
   function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const filesArray = Array.from(e.target.files);
     setSelectedFiles((prev) => [...prev, ...filesArray]);
-
-    // Reset input, so we can choose the same file again if needed
     e.target.value = "";
   }
 
@@ -130,16 +126,18 @@ export default function ChatLayout() {
   }
 
   // --- EFFECTS ---
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   // --- RENDER ---
-
   return (
     <div className="w-full flex justify-center p-4">
-      <Card className="relative w-full max-w-2xl h-[calc(100vh-80px)] flex flex-col shadow-md rounded-lg">
+      {/* 
+        Karta z białym tłem, subtelnym borderem i shadow – 
+        dzięki temu odcina się od reszty layoutu. 
+      */}
+      <Card className="relative w-full max-w-2xl h-[calc(100vh-80px)] flex flex-col border border-border bg-background shadow-sm rounded-lg">
         {/* Górny pasek z przyciskiem wyczyszczenia chatu */}
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="font-semibold text-lg text-foreground">
@@ -159,12 +157,13 @@ export default function ChatLayout() {
           {messages.map((message) => {
             const isUser = message.role === "user";
 
-            // Wiadomość użytkownika: jasne tło i obramowanie
-            // Wiadomość asystenta: tło secondary
+            // Dwa style bąbelków: user (szara chmurka) i asystent (błękit)
+            // bg-foreground/5 => subtelny szary odcień
+            // bg-secondary => Twoja jasnobłękitna barwa z palety
             const messageClasses = cn(
-              "flex flex-col gap-1 max-w-[80%] p-3 rounded-lg relative shadow-sm",
+              "flex flex-col gap-1 max-w-[80%] p-3 rounded-md relative shadow-sm",
               isUser
-                ? "ml-auto bg-secondary text-foreground border border-primary"
+                ? "ml-auto bg-foreground/5 border border-border text-foreground"
                 : "mr-auto bg-secondary text-secondary-foreground"
             );
 
@@ -178,7 +177,7 @@ export default function ChatLayout() {
                     <FaUserCircle size={20} />
                   )}
                   <span className="text-xs opacity-80">
-                    {isUser ? "Ty" : "Dentysta"} - {message.timestamp}
+                    {isUser ? "Ty" : "Dentysta"} • {message.timestamp}
                   </span>
                 </div>
 
@@ -221,9 +220,9 @@ export default function ChatLayout() {
         {showScrollToBottom && (
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-28 left-4 p-2 bg-primary hover:bg-primary/90 rounded-full shadow-md transition-all"
+            className="absolute bottom-28 left-4 p-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-md transition-all"
           >
-            <AiOutlineArrowDown size={24} className="text-primary-foreground" />
+            <AiOutlineArrowDown size={20} />
           </button>
         )}
 
@@ -255,47 +254,44 @@ export default function ChatLayout() {
             </div>
           )}
 
-          <div className="flex items-center space-x-3">
-            <div className="flex-1">
-              {/* Ustawiamy text-base, aby zapobiec przybliżaniu na iOS */}
-              <Textarea
-                placeholder="Napisz wiadomość..."
-                value={textInput}
-                onChange={(e) => setTextInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
-                  }
-                }}
-                className="text-base resize-none"
-                rows={1}
-              />
-            </div>
+          {/* Wiersz z text-area i przyciskami */}
+          <div className="flex items-center gap-2">
+            <Textarea
+              placeholder="Napisz wiadomość..."
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              className="flex-1 text-base resize-none"
+              rows={1}
+            />
 
-            <div>
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer text-primary-foreground hover:text-primary"
-              >
-                <FiImage size={24} />
-              </label>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleImageChange}
-              />
-            </div>
-
-            <Button
-              variant="ghost"
-              onClick={handleSend}
-              className="p-2 bg-primary hover:bg-primary/90 rounded-full"
+            {/* Ikona uploadu */}
+            <label
+              htmlFor="image-upload"
+              className="cursor-pointer p-2 text-foreground hover:text-primary transition-colors"
             >
-              <AiOutlineSend size={24} className="text-primary-foreground" />
+              <FiImage size={20} />
+            </label>
+            <input
+              id="image-upload"
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleImageChange}
+            />
+
+            {/* Przyciski wysyłania */}
+            <Button
+              onClick={handleSend}
+              className="flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-2 rounded-md"
+            >
+              <AiOutlineSend size={18} />
             </Button>
           </div>
         </div>
