@@ -3,8 +3,14 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaGoogle, FaApple, FaFacebook, FaArrowLeft, FaCheck } from "react-icons/fa";
+import {
+  FaApple,
+  FaFacebook,
+  FaArrowLeft,
+  FaCheck,
+} from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -36,7 +42,6 @@ export default function LoginPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  
 
   return (
     <div className="flex h-screen justify-center px-4">
@@ -60,9 +65,7 @@ export default function LoginPage() {
               required
               className="w-full bg-transparent focus:outline-none text-foreground placeholder-muted-foreground"
             />
-            {
-              isValidEmail(email) && <FaCheck className="text-primary" />
-            }
+            {isValidEmail(email) && <FaCheck className="text-primary" />}
           </div>
 
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
@@ -115,7 +118,7 @@ export default function LoginPage() {
             onClick={() => handleOAuth("google")}
             className="flex items-center p-4 w-full py-3 border border-border rounded-full bg-input text-foreground hover:bg-secondary/10 transition hover:outline-2 hover:border-primary"
           >
-            <FaGoogle className="text-muted-foreground mr-2" />
+            <FcGoogle className="mr-2 text-lg" />
             <p className="w-full text-muted-foreground text-sm">
               Sign in with Google
             </p>
@@ -126,7 +129,7 @@ export default function LoginPage() {
             className="flex items-center p-4 justify-center w-full py-3 
             border border-border rounded-full bg-input text-foreground hover:bg-secondary/10 transition hover:outline-2 hover:border-primary"
           >
-            <FaApple className="text-muted-foreground mr-2 text-xl" />
+            <FaApple className="text-black mr-2 text-xl" />
             <p className="w-full text-muted-foreground text-sm">
               Sign in with Apple
             </p>
@@ -137,7 +140,7 @@ export default function LoginPage() {
             className="flex items-center p-4 justify-center w-full py-3 
             border border-border rounded-full bg-input text-foreground hover:bg-secondary/10 transition hover:outline-2 hover:border-primary"
           >
-            <FaFacebook className="text-muted-foreground mr-2 text-lg" />
+            <FaFacebook className="text-blue-600 mr-2 text-lg" />
             <p className="w-full text-muted-foreground text-sm">
               Sign in with Facebook
             </p>

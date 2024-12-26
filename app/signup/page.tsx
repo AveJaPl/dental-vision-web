@@ -4,9 +4,10 @@ import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
-import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiMail, FiLock, FiEye, FiEyeOff, FiUser } from "react-icons/fi";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -54,16 +55,34 @@ export default function SignupPage() {
           <Link href="/" className="absolute p-4 left-2">
             <FaArrowLeft className="text-muted-foreground" />
           </Link>
-          <h1 className="w-full text-center text-xl font-bold">
-            Sign Up
-          </h1>
+          <h1 className="w-full text-center text-xl font-bold">Sign Up</h1>
         </div>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
-            <FiMail className="text-muted-foreground mr-3" />
+            {name.length > 0 ? (
+              <FiUser className="text-primary mr-3" />
+            ) : (
+              <FiUser className="text-muted-foreground mr-3" />
+            )}
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full bg-transparent focus:outline-none text-foreground placeholder-muted-foreground"
+            />
+          </div>
+
+          <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
+            {isValidEmail(email) ? (
+              <FiMail className="text-primary mr-3" />
+            ) : (
+              <FiMail className="text-muted-foreground mr-3" />
+            )}
             <input
               type="email"
               placeholder="Enter your email"
@@ -76,7 +95,11 @@ export default function SignupPage() {
           </div>
 
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
-            <FiLock className="text-muted-foreground mr-3" />
+            {password.length > 0 ? (
+              <FiLock className="text-primary mr-3" />
+            ) : (
+              <FiLock className="text-muted-foreground mr-3" />
+            )}
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
@@ -103,6 +126,20 @@ export default function SignupPage() {
           >
             {loading ? "Registering..." : "Sign Up"}
           </button>
+          {/*Checkbox with Terms of Service and Privacy Policy */}
+          <div className="flex items-center space-x-2">
+            <input type="checkbox" id="terms" name="terms" value="terms" />
+            <label htmlFor="terms" className="text-muted-foreground text-sm">
+              I agree to the{" "}
+              <Link href="/terms" className="text-primary">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-primary">
+                Privacy Policy
+              </Link>
+            </label>
+          </div>
         </form>
 
         <div className="text-center text-sm text-muted-foreground mt-6">
