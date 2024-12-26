@@ -21,11 +21,11 @@ export default function LandingPage() {
       )}
     >
       {/* Header Section */}
-      <div className="flex items-center space-y-4 mb-12 mr-4">
+      <div className="flex flex-col items-center mb-12">
         <Image
           src="/logo.png"
-          width={124}
-          height={124}
+          width={100}
+          height={100}
           alt="TeethScan AI"
         />
         <h1
@@ -43,7 +43,7 @@ export default function LandingPage() {
       {/* Main Content */}
       <div className="flex flex-col items-center space-y-6 max-w-md text-center">
         <h2 className="text-xl font-semibold tracking-tigh">
-          Your Journey to Better Health Starts Here
+          Let's get started!
         </h2>
         <p className="text-base text-muted-foreground leading-relaxed">
           Login to explore our features <br></br> and take control of your dental health.
