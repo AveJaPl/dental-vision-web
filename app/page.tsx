@@ -16,7 +16,7 @@ export default function LandingPage() {
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-700 ease-in max-w-xs sm:max-w-md mx-auto",
+        "min-h-screen flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-700 ease-in max-w-xs sm:max-w-md mx-auto px-2",
         isVisible ? "opacity-100" : "opacity-0"
       )}
     >
@@ -24,8 +24,8 @@ export default function LandingPage() {
       <div className="flex flex-col items-center mb-12">
         <Image
           src="/logo.png"
-          width={100}
-          height={100}
+          width={110}
+          height={110}
           alt="TeethScan AI"
         />
         <h1
