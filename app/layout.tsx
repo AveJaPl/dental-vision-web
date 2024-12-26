@@ -5,8 +5,8 @@ import { AuthProvider } from "@/app/context/AuthContext";
 import "./globals.css";
 
 export const metadata = {
-  title: "Public Layout",
-  description: "Strony publiczne, dostępne dla niezalogowanych użytkowników.",
+  title: "TeethScan AI",
+  description: "TeethScan AI - AI-powered dental health assistant",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
