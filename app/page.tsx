@@ -16,7 +16,7 @@ export default function LandingPage() {
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-700 ease-in",
+        "min-h-screen flex flex-col items-center justify-center bg-background text-foreground transition-opacity duration-700 ease-in max-w-xs sm:max-w-md mx-auto",
         isVisible ? "opacity-100" : "opacity-0"
       )}
     >
@@ -42,7 +42,7 @@ export default function LandingPage() {
 
       {/* Main Content */}
       <div className="flex flex-col items-center space-y-6 max-w-md text-center">
-        <h2 className="text-xl font-semibold tracking-tighter">
+        <h2 className="text-xl font-semibold tracking-tigh">
           Your Journey to Better Health Starts Here
         </h2>
         <p className="text-base text-muted-foreground leading-relaxed">
@@ -51,7 +51,7 @@ export default function LandingPage() {
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col space-y-4 w-full max-w-sm mt-10">
+      <div className="flex flex-col space-y-4 w-full max-w-md mt-10">
         <Link href="/login">
           <button className="w-full py-3 rounded-full bg-primary text-primary-foreground font-medium shadow-md hover:bg-primary/90 transition duration-200">
             Login

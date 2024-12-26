@@ -51,15 +51,15 @@ export default function SignupPage() {
       <div className="w-full max-w-md p-6">
         {/* Header */}
         <div className="flex items-center mb-12">
-          <Link href="/">
+          <Link href="/" className="absolute p-4 left-2">
             <FaArrowLeft className="text-muted-foreground" />
           </Link>
-          <h1 className="w-full text-center text-xl font-bold">Sign Up</h1>
+          <h1 className="w-full text-center text-xl font-bold">
+            Sign Up
+          </h1>
         </div>
 
-        {error && (
-          <p className="text-red-500 text-center mb-4">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
@@ -72,9 +72,7 @@ export default function SignupPage() {
               required
               className="w-full bg-transparent focus:outline-none text-foreground placeholder-muted-foreground"
             />
-            {isValidEmail(email) && (
-              <FaCheck className="text-primary" />
-            )}
+            {isValidEmail(email) && <FaCheck className="text-primary" />}
           </div>
 
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">

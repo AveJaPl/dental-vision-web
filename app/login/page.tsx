@@ -43,7 +43,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-6">
         {/* Header */}
         <div className="flex items-center mb-12">
-          <Link href="/">
+          <Link href="/" className="absolute p-4 left-2">
             <FaArrowLeft className="text-muted-foreground" />
           </Link>
           <h1 className="w-full text-center text-xl font-bold">Login</h1>
