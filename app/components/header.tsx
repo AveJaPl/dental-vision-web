@@ -6,7 +6,7 @@ import { Bell } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-10 bg-background shadow-md px-4 py-3 flex items-center justify-between w-full">
+    <header className="fixed top-0 z-10 bg-background shadow-md px-4 py-3 flex items-center justify-between w-full">
       {/* Left Section - Avatar */}
       <div className="flex items-center space-x-3">
         <Avatar className="w-14 h-14">

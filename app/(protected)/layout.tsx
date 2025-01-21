@@ -9,7 +9,7 @@ export default function ProtectedLayout({
   return (
     <div className="flex flex-col min-h-screen w-full overscroll-none">
       <Header /> {/* Top sticky header */}
-      <main className="flex-grow px-6 py-4">{children}</main>
+      <main className="flex-grow px-6 py-4 mt-[80px] mb-[80px]">{children}</main>
       <Footer /> {/* Bottom sticky footer */}
     </div>
   );
