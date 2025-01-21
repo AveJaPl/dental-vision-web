@@ -10,21 +10,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { FaClipboardList, FaBolt } from "react-icons/fa";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 export default function Dashboard() {
+
+  // Handle redirect
+  const handleRedirect = (path: string) => () => {
+    redirect(path);
+  };
+
   return (
     <div className="space-y-8 bg-white">
       {/* Greeting Section */}
       <section className="text-center space-y-2">
         <h1 className="text-xl font-semibold text-gray-800">
-          Zadbaj o swój <span className="text-primary text-xl font-semibold">zdrowy</span> uśmiech
+          Zadbaj o swój{" "}
+          <span className="text-primary text-xl font-semibold">zdrowy</span>{" "}
+          uśmiech
         </h1>
       </section>
 
       {/* Main Options Section */}
       <section className="grid grid-cols-2 gap-4 w-full max-w-md mx-auto">
         {/* Asystent */}
-        <Card className="col-span-2 bg-gradient-to-br bg-background  rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
+        <Card className="col-span-2 bg-gradient-to-br bg-background  rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center" onClick={handleRedirect("/chat")}>
           <Image
             src="/assistant.png"
             width={82}

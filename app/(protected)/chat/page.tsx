@@ -133,10 +133,6 @@ export default function ChatLayout() {
   // --- RENDER ---
   return (
     <div className="w-full flex justify-center">
-      {/* 
-        Karta z białym tłem, subtelnym borderem i shadow – 
-        dzięki temu odcina się od reszty layoutu. 
-      */}
       <Card className="relative w-full max-w-2xl h-[calc(100vh-200px)] flex flex-col border border-border bg-background shadow-sm rounded-lg">
         {/* Górny pasek z przyciskiem wyczyszczenia chatu */}
         <div className="flex items-center justify-between p-4 border-b border-border">
@@ -164,7 +160,7 @@ export default function ChatLayout() {
               "flex flex-col gap-1 max-w-[80%] p-3 rounded-md relative shadow-sm",
               isUser
                 ? "ml-auto bg-foreground/5 border border-border text-foreground"
-                : "mr-auto bg-secondary text-secondary-foreground"
+                : "mr-auto bg-primary text-primary-foreground"
             );
 
             return (
