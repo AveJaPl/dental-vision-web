@@ -9,7 +9,11 @@ export const metadata = {
   description: "TeethScan AI - AI-powered dental health assistant",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning className="light">
       <head>
@@ -39,12 +43,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
       </head>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
-          <AuthProvider user={null}>
-            {children}
-          </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          disableTransitionOnChange
+        >
+          <AuthProvider user={null}>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>
