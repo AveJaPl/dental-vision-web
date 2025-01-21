@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 
@@ -8,10 +8,13 @@ import clsx from "clsx";
 import { Home, BarChart2, Stethoscope, User } from "lucide-react";
 
 export function Footer() {
+  useEffect(() => {
+    setActiveTab(window.location.pathname.split("/")[1]);
+  }, []);
   const [activeTab, setActiveTab] = useState("overview");
 
   const navItems = [
-    { href: "/dashboard", key: "overview", Icon: Home },
+    { href: "/dashboard", key: "dashboard", Icon: Home },
     { href: "/reports", key: "reports", Icon: BarChart2 },
     { href: "/diagnosis", key: "diagnosis", Icon: Stethoscope },
     { href: "/profile", key: "profile", Icon: User },
