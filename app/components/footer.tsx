@@ -21,7 +21,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="sticky bottom-0 bg-background border-t shadow-md flex justify-around items-center py-3">
+    <footer className="sticky bottom-0 bg-background border-t shadow-md flex justify-around items-center pb-5 pt-3">
       {navItems.map(({ href, key, Icon }) => (
         <Link
           key={key}
