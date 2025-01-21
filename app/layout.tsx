@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="/favicon-32x32.png"
         />
         <link rel="icon" href="/favicon.ico" />
-        {/* <meta name="theme-color" content="#000000" /> */}
+        <meta name="theme-color" content="#000000" />
         {/* Specjalne metatagi dla iOS */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
