@@ -39,7 +39,7 @@ export const login = async ({ email, password }: LoginData) => {
     console.error(error);
     return {
       data: null,
-      message: "Coś poszło nie tak. Spróbuj ponownie później.",
+      message: "Coś poszło nie tak.",
       status: 400,
     };
   }
@@ -66,7 +66,7 @@ export const register = async ({ name, email, password }: RegisterData) => {
     console.error(error);
     return {
       data: null,
-      message: "Coś poszło nie tak. Spróbuj ponownie później.",
+      message: "Coś poszło nie tak.",
       status: 400,
     };
   }
@@ -92,7 +92,7 @@ export const logout = async () => {
     console.error(error);
     return {
       data: null,
-      message: "Coś poszło nie tak. Spróbuj ponownie później.",
+      message: "Coś poszło nie tak.",
       status: 400,
     };
   }
