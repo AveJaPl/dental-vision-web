@@ -30,7 +30,7 @@ export default function SignupPage() {
       setError(message);
       router.push("/dashboard");
     } else {
-      setError(message);
+      setError(message || "Coś poszło nie tak.");
     }
 
     setLoading(false);

@@ -27,7 +27,7 @@ export default function LoginPage() {
       console.log("Login success", data);
       router.push("/dashboard");
     } else {
-      setError(message);
+      setError(message || "Coś poszło nie tak.");
     }
 
     setLoading(false);
