@@ -3,14 +3,10 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  FaApple,
-  FaFacebook,
-  FaArrowLeft,
-  FaCheck,
-} from "react-icons/fa";
+import { FaApple, FaFacebook, FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { login } from "@/lib/sender";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,14 +20,16 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      // Mock logowanie - zastąp prawdziwym API
+    const { data, message, status } = await login({ email, password });
+
+    if (status === 200) {
+      console.log("Login success", data);
       router.push("/dashboard");
-    } catch (err) {
-      console.error("Login failed", err);
-    } finally {
-      setLoading(false);
+    } else {
+      console.error(message);
     }
+
+    setLoading(false);
   };
 
   const handleOAuth = (provider: string) => {

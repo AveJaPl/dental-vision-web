@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiUser } from "react-icons/fi";
+import { register } from "@/lib/sender";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -21,25 +22,18 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
 
-    try {
-      const response = await fetch("http://localhost:3000/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
+    const { data, message, status } = await register({ name, email, password });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
-      }
-
+    console.log("Register", { data, message, status });
+    if (status === 201) {
+      console.log("Register success", data);
       router.push("/dashboard");
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
+    } else {
+      setError(message);
     }
+
+    setLoading(false);
+    
   };
 
   const isValidEmail = (email: string) => {
