@@ -22,10 +22,11 @@ export const login = async ({ email, password }: LoginData) => {
   try {
     const res = await api.post("/auth/login", { email, password });
     if (res) {
+      const { data, message, status } = res.data;
       return {
-        data: res.data,
-        message: "Poprawnie zalogowano.",
-        status: 200,
+        data,
+        message,
+        status,
       };
     } else {
       return {

@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -21,12 +22,12 @@ export default function LoginPage() {
     setLoading(true);
 
     const { data, message, status } = await login({ email, password });
-
+    console.log("Login", { data, message, status });
     if (status === 200) {
       console.log("Login success", data);
       router.push("/dashboard");
     } else {
-      console.error(message);
+      setError(message);
     }
 
     setLoading(false);
@@ -85,7 +86,9 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="text-right">
+          <div className={`flex ${error ? "justify-between": "justify-end"} items-center px-4`}>
+            {/* Display the error message if it exists */}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             <Link href="/forgot-password" className="text-primary text-sm">
               Forgot Password?
             </Link>
