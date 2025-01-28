@@ -24,7 +24,7 @@ export default function LoginPage() {
     const { data, message, status } = await login({ email, password });
     console.log("Login", { data, message, status });
     if (status === 200) {
-      router.push("/dashboard");
+      // router.push("/dashboard");
     } else {
       setError(message || "Coś poszło nie tak.");
     }

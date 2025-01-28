@@ -26,7 +26,7 @@ export default function SignupPage() {
 
     console.log("Register", { data, message, status });
     if (status === 201) {
-      router.push("/dashboard");
+      // router.push("/dashboard");
     } else {
       setError(message || "Coś poszło nie tak.");
     }
