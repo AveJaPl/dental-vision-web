@@ -96,7 +96,12 @@ export const logout = async () => {
 
 export const checkAuth = async () => {
   try {
-    const res = await api.get("/auth/check");
+    const res = await axios.get("https://chat.lukaszszczesiak.pl/auth/check", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true, // Ustawienie withCredentials tutaj
+    });
     const { data, message, status } = res.data;
     console.log("checkAuth", { data, message, status });
     return {
