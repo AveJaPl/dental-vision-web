@@ -34,7 +34,6 @@ export default function SignupPage() {
     }
 
     setLoading(false);
-    
   };
 
   const isValidEmail = (email: string) => {
@@ -53,9 +52,8 @@ export default function SignupPage() {
           <h1 className="w-full text-center text-xl font-bold">Sign Up</h1>
         </div>
 
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
         <form onSubmit={handleRegister} className="space-y-4">
+          {/* Pole Name */}
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
             {name.length > 0 ? (
               <FiUser className="text-primary mr-3" />
@@ -72,6 +70,7 @@ export default function SignupPage() {
             />
           </div>
 
+          {/* Pole Email */}
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
             {isValidEmail(email) ? (
               <FiMail className="text-primary mr-3" />
@@ -89,6 +88,7 @@ export default function SignupPage() {
             {isValidEmail(email) && <FaCheck className="text-primary" />}
           </div>
 
+          {/* Pole Password */}
           <div className="flex items-center px-4 py-3 bg-input rounded-full border border-border relative">
             {password.length > 0 ? (
               <FiLock className="text-primary mr-3" />
@@ -112,16 +112,10 @@ export default function SignupPage() {
             </button>
           </div>
 
-          <button
-            type="submit"
-            className={`w-full py-3 rounded-full bg-primary text-primary-foreground font-semibold text-center transition ${
-              loading ? "opacity-50" : "hover:bg-primary/90"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Registering..." : "Sign Up"}
-          </button>
-          {/*Checkbox with Terms of Service and Privacy Policy */}
+          {/* Komunikat błędu (jeśli istnieje) */}
+          <p className="text-red-500 text-sm">{error}&nbsp;</p>
+
+          {/* Checkbox */}
           <div className="flex items-center space-x-2">
             <input type="checkbox" id="terms" name="terms" value="terms" />
             <label htmlFor="terms" className="text-muted-foreground text-sm">
@@ -135,8 +129,20 @@ export default function SignupPage() {
               </Link>
             </label>
           </div>
+
+          {/* Przycisk Sign Up */}
+          <button
+            type="submit"
+            className={`w-full py-3 rounded-full bg-primary text-primary-foreground font-semibold text-center transition ${
+              loading ? "opacity-50" : "hover:bg-primary/90"
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Registering..." : "Sign Up"}
+          </button>
         </form>
 
+        {/* Already have an account? */}
         <div className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}
           <Link href="/login" className="text-primary font-medium">
