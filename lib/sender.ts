@@ -1,15 +1,5 @@
 import axios from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
 interface LoginData {
   email: string;
   password: string;
@@ -23,7 +13,19 @@ interface RegisterData {
 
 export const login = async ({ email, password }: LoginData) => {
   try {
-    const res = await api.post("/auth/login", { email, password });
+    const res = await axios.post(
+      "https://chat.lukaszszczesiak.pl/auth/login",
+      {
+        email,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true, // Ustawienie withCredentials tutaj
+      }
+    );
     if (res) {
       const { data, message, status } = res.data;
       return {
@@ -50,7 +52,20 @@ export const login = async ({ email, password }: LoginData) => {
 
 export const register = async ({ name, email, password }: RegisterData) => {
   try {
-    const res = await api.post("/auth/register", { name, email, password });
+    const res = await axios.post(
+      "https://chat.lukaszszczesiak.pl/auth/register",
+      {
+        name,
+        email,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true, // Ustawienie withCredentials tutaj
+      }
+    );
     if (res) {
       const { data, message, status } = res.data;
       return {
@@ -77,7 +92,15 @@ export const register = async ({ name, email, password }: RegisterData) => {
 
 export const logout = async () => {
   try {
-    const res = await api.post("/auth/logout");
+    const res = await axios.post(
+      "https://chat.lukaszszczesiak.pl/auth/logout",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true, // Ustawienie withCredentials tutaj
+      }
+    );
     const { data, message, status } = res.data;
     return {
       data,

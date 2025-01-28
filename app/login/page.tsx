@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { FaApple, FaFacebook, FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { login } from "@/lib/sender";
+import { checkAuth, login } from "@/lib/sender";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,7 +25,7 @@ export default function LoginPage() {
     console.log("Login", { data, message, status });
     if (status === 200) {
       console.log("Login success", data);
-      router.push("/dashboard");
+      console.log(checkAuth());
     } else {
       setError(message || "Coś poszło nie tak.");
     }
