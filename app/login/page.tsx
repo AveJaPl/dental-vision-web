@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FaApple, FaFacebook, FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { login } from "@/lib/sender";
+import { checkAuth, login } from "@/lib/sender";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,6 +24,11 @@ export default function LoginPage() {
     const { data, message, status } = await login({ email, password });
     console.log("Login", { data, message, status });
     if (status === 200) {
+      const {data} = await checkAuth();
+      if(data.authenticated) {
+        console.log("Authenticated", data);
+      }
+
       // router.push("/dashboard");
     } else {
       setError(message || "Coś poszło nie tak.");
