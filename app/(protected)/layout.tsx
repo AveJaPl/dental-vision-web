@@ -16,6 +16,7 @@ export default function ProtectedLayout({
   useEffect(() => {
     const verifyAuth = async () => {
       const { data } = await checkAuth();
+      console.log("ProtectedLayout", data);
       if (!data.authenticated) {
         router.push("/login");
       }
