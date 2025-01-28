@@ -78,19 +78,32 @@ export const register = async ({ name, email, password }: RegisterData) => {
 export const logout = async () => {
   try {
     const res = await api.post("/auth/logout");
-    if (res) {
-      return {
-        data: res.data,
-        message: "Poprawnie wylogowano.",
-        status: 200,
-      };
-    } else {
-      return {
-        data: null,
-        message: "Nie udało się wylogować.",
-        status: 400,
-      };
-    }
+    const { data, message, status } = res.data;
+    return {
+      data,
+      message,
+      status,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      data: null,
+      message: "Coś poszło nie tak.",
+      status: 400,
+    };
+  }
+};
+
+export const checkAuth = async () => {
+  try {
+    const res = await api.get("/auth/check");
+    const { data, message, status } = res.data;
+    console.log("checkAuth", { data, message, status });
+    return {
+      data,
+      message,
+      status,
+    };
   } catch (error) {
     console.error(error);
     return {
