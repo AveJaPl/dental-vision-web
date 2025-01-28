@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 const unsignedPaths = ["/login", "/register"];
 const publicPaths = ["/", ...unsignedPaths];
 export function middleware(req: NextRequest) {
-  console.log("Tokens: ", req.cookies);
+  console.log("Cookies: ", req.cookies.getAll());
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
