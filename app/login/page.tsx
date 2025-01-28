@@ -25,7 +25,8 @@ export default function LoginPage() {
     console.log("Login", { data, message, status });
     if (status === 200) {
       console.log("Login success", data);
-      console.log(checkAuth());
+      console.log(await checkAuth());
+      router.push("/dashboard");
     } else {
       setError(message || "Coś poszło nie tak.");
     }
