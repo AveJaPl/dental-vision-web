@@ -34,5 +34,5 @@ services:
     depends_on:
       - database
     working_dir: /app
-    command: npm run dev
+    command: sh -c "npx prisma generate && npm run dev"
 
