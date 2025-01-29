@@ -14,17 +14,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  password  String
-  sawDemo   Boolean  @default(false)
-  googleId  String? @unique
-  facebookId String? @unique
-  appleId   String? @unique
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String
+  password      String
+  sawDemo       Boolean        @default(false)
+  googleId      String?        @unique
+  facebookId    String?        @unique
+  appleId       String?        @unique
   subscriptions Subscription[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model Subscription {
@@ -35,4 +35,12 @@ model Subscription {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  role      String
+  content   String?
+  images    String[] @default([])
+  timestamp String
 }
