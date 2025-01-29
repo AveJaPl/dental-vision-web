@@ -12,10 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { FaUser, FaLock, FaBell, FaSignOutAlt } from "react-icons/fa";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function Profile() {
   // State to toggle edit mode
   const [isEditing, setIsEditing] = useState(false);
+  const { logout } = useAuth();
 
   // State to manage user data
   const [userData, setUserData] = useState({
@@ -154,6 +156,7 @@ export default function Profile() {
           variant="destructive"
           size="lg"
           className="w-full flex items-center justify-center space-x-2"
+          onClick={logout}
         >
           <FaSignOutAlt size={20} />
           <span>Wyloguj się</span>

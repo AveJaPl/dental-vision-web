@@ -2,12 +2,13 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiUser } from "react-icons/fi";
-import { register } from "@/lib/sender";
+import { postData } from "../utils/sendRequest";
+import { useAuth } from "../context/AuthContext";
 
-export default function SignupPage() {
+export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,23 +16,27 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // const router = useRouter();
+  const router = useRouter();
+  const { setAuthenticated } = useAuth();
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
-    const { data, message, status } = await register({ name, email, password });
+    const { status, message } = await postData("/api/auth/register", {
+      name,
+      email,
+      password,
+    });
 
-    console.log("Register", { data, message, status });
-    if (status === 201) {
-      // router.push("/dashboard");
-    } else {
-      setError(message || "Coś poszło nie tak.");
+    if (status === 200) {
+      setAuthenticated(true);
+      router.push("/dashboard");
+      return;
     }
-
+    setError(message);
     setLoading(false);
+
   };
 
   const isValidEmail = (email: string) => {

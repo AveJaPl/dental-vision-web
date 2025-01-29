@@ -57,7 +57,7 @@ export default function LandingPage() {
             Login
           </button>
         </Link>
-        <Link href="/signup">
+        <Link href="/register">
           <button className="w-full py-3 rounded-full border border-primary text-primary font-medium shadow-md hover:bg-primary/10 transition duration-200">
             Sign Up
           </button>

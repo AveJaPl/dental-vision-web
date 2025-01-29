@@ -2,11 +2,12 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FaApple, FaFacebook, FaArrowLeft, FaCheck } from "react-icons/fa";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { checkAuth, login } from "@/lib/sender";
+import { postData } from "../utils/sendRequest";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,25 +16,25 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // const router = useRouter();
+  const router = useRouter();
+  const { setAuthenticated } = useAuth();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { data, message, status } = await login({ email, password });
-    console.log("Login", { data, message, status });
-    if (status === 200) {
-      const {data} = await checkAuth();
-      if(data.authenticated) {
-        console.log("Authenticated", data);
-      }
+    const { status, message } = await postData("/api/auth/login", {
+      email,
+      password,
+    });
 
-      // router.push("/dashboard");
-    } else {
-      setError(message || "Coś poszło nie tak.");
+    if (status === 200) {
+      setAuthenticated(true);
+      router.push("/dashboard");
+      return;
     }
 
+    setError(message);
     setLoading(false);
   };
 
@@ -90,7 +91,11 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className={`flex ${error ? "justify-between": "justify-end"} items-center px-4`}>
+          <div
+            className={`flex ${
+              error ? "justify-between" : "justify-end"
+            } items-center px-4`}
+          >
             {/* Display the error message if it exists */}
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Link href="/forgot-password" className="text-primary text-sm">
@@ -111,7 +116,7 @@ export default function LoginPage() {
 
         <div className="text-center text-sm text-muted-foreground mt-6">
           Don’t have an account?{" "}
-          <Link href="/signup" className="text-primary font-medium">
+          <Link href="/register" className="text-primary font-medium">
             Sign Up
           </Link>
         </div>
