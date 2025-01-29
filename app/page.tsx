@@ -26,7 +26,7 @@ export default function LandingPage() {
           src="/logo.png"
           width={110}
           height={110}
-          alt="TeethScan AI"
+          alt="SmileScan AI"
         />
         <h1
           className="text-3xl font-bold tracking-tight text-primary-foreground"
@@ -36,7 +36,7 @@ export default function LandingPage() {
             WebkitTextFillColor: "transparent",
           }}
         >
-          TeethScan AI
+          SmileScan AI
         </h1>
       </div>
 

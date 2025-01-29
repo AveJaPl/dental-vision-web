@@ -5,8 +5,8 @@ import { AuthProvider } from "@/app/context/AuthContext";
 import "./globals.css";
 
 export const metadata = {
-  title: "TeethScan AI",
-  description: "TeethScan AI - AI-powered dental health assistant",
+  title: "SmileScan AI",
+  description: "SmileScan AI - AI-powered dental health assistant",
 };
 
 export default function RootLayout({
