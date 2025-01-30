@@ -211,6 +211,32 @@ export default function ChatLayout() {
 
         {/* Sekcja z inputem */}
         <div className="border-t border-border p-4">
+          {/*Podgląd wybranych zdjęć*/}
+          {selectedFiles.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto">
+              {selectedFiles.map((file, idx) => {
+                const url = URL.createObjectURL(file);
+                return (
+                  <div key={idx} className="relative">
+                    <Image
+                      src={url}
+                      alt="Preview"
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                    <button
+                      onClick={() => removeSelectedFile(idx)}
+                      className="absolute top-1 right-1 p-1 bg-black/50 text-white rounded-full hover:bg-black"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           <div className="flex items-center gap-2">
             <Textarea
               placeholder="Napisz wiadomość..."
