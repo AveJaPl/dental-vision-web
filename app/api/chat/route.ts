@@ -14,8 +14,12 @@ type ContentItem =
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("🔵 Otrzymano żądanie POST");
+
     // Pobranie tokena z ciasteczek
     const token = req.cookies.get("token")?.value;
+    console.log("🔑 Pobieranie tokena z ciasteczek:", token);
+
     if (!token) {
       console.log("❌ Brak tokena uwierzytelniającego.");
       return NextResponse.json(
@@ -30,23 +34,31 @@ export async function POST(req: NextRequest) {
       decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
         userId: string;
       };
-    } catch {
-      console.log("❌ Nieprawidłowy token.");
+      console.log("✅ Token poprawny. Użytkownik:", decoded.userId);
+    } catch (err) {
+      console.log("❌ Nieprawidłowy token:", err);
       return NextResponse.json(
         { error: "Nieprawidłowy token uwierzytelniający." },
         { status: 401 }
       );
     }
 
-    // Oczekujemy, że w żądaniu są zarówno treść, jak i obrazy
+    // Odczytanie danych z żądania
     const { content, images } = await req.json();
+    console.log("📥 Otrzymano dane:", { content, images });
+
+    if (!content && (!images || images.length === 0)) {
+      console.log("❌ Brak treści i obrazów w żądaniu.");
+      return NextResponse.json(
+        { error: "Brak treści i obrazów." },
+        { status: 400 }
+      );
+    }
+
     const userId = decoded.userId;
-    console.log(`📨 Otrzymano wiadomość od użytkownika ${userId}:`, {
-      content,
-      images,
-    });
 
     // Zapis wiadomości użytkownika do bazy
+    console.log("💾 Zapisywanie wiadomości użytkownika do bazy...");
     const userMessage = await prisma.message.create({
       data: {
         role: "user",
@@ -56,7 +68,6 @@ export async function POST(req: NextRequest) {
         userId,
       },
     });
-
     console.log("✅ Wiadomość użytkownika zapisana:", userMessage);
 
     // Tworzymy obiekt wiadomości do OpenAI
@@ -66,44 +77,44 @@ export async function POST(req: NextRequest) {
         content: [
           {
             type: "text",
-            text: "Jesteś asystentem medycznym specjalizującym się w szczegółowej analizie zdjęć dentystycznych. Twoim zadaniem jest precyzyjna ocena stanu uzębienia na podstawie dostarczonych zdjęć. Po dokładnym przeanalizowaniu fotografii, możesz wskazać pacjentowi wstępne obserwacje, które mogą wymagać dalszej konsultacji lub zabiegu. Pamiętaj, aby zawsze zachować profesjonalizm i klarowność przekazywanych informacji. Jeśli zauważysz jakiekolwiek oznaki problemów, takich jak ubytki, zmiany przyzębia, stan zapalny, problemy ze szkliwem lub potencjalne problemy z implantami, wskaż pacjentowi konieczność wizyty u specjalisty. Zachęć pacjenta do skonsultowania się z profesjonalnym stomatologiem w przychodni Implant Medical, podając link do strony kliniki w formacie [https://implantmedical.pl/](https://implantmedical.pl/). Przy każdej ocenie przypominaj o możliwości umówienia wizyty, aby pacjent mógł skonsultować swoje potrzeby z lekarzem specjalistą i zaplanować odpowiednie leczenie.",
+            text: "Jesteś asystentem medycznym specjalizującym się w analizie zdjęć dentystycznych...",
           },
         ],
       },
       {
         role: "user",
-        content: [{ type: "text", text: content }], // Treść wiadomości
+        content: [{ type: "text", text: content }],
       },
     ];
 
-    // Upewnij się, że content jest tablicą
-    if (!Array.isArray(openaiMessages[1].content)) {
-      openaiMessages[1].content = [{ type: "text", text: content }]; // Jeśli jest łańcuchem, przekształć na tablicę
-    }
-
-    // Dodaj zdjęcia
+    // Dodanie obrazów do wiadomości OpenAI
     if (images && images.length > 0) {
+      console.log(`🖼️ Dodawanie ${images.length} obrazów do wiadomości OpenAI`);
       images.forEach((imageUrl: string) => {
         (openaiMessages[1].content as any).push({
           type: "image_url",
           image_url: { url: imageUrl },
         });
       });
+    } else {
+      console.log("⚠️ Brak obrazów do przetworzenia.");
     }
 
     // Pobranie historii czatu użytkownika
+    console.log("📜 Pobieranie historii wiadomości użytkownika...");
     const chatHistory = await prisma.message.findMany({
       where: { userId },
       orderBy: { timestamp: "asc" },
     });
 
-    // Przetwarzamy historię wiadomości i mapujemy zdjęcia, jeśli są
+    console.log("📚 Historia czatu użytkownika:", chatHistory);
+
+    // Mapowanie historii do formatu OpenAI
     const openaiHistoryMessages = chatHistory.map((msg) => {
       const contentArray: ContentItem[] = [
         { type: "text", text: msg.content || "" },
       ];
 
-      // Jeśli wiadomość zawiera obrazy, dodajemy je do content
       if (msg.images && msg.images.length > 0) {
         msg.images.forEach((imageUrl: string) => {
           contentArray.push({
@@ -130,18 +141,19 @@ export async function POST(req: NextRequest) {
       ],
     });
 
-    console.log("📚 Historia wiadomości dla OpenAI:", openaiHistoryMessages);
-
-    // Wysłanie zapytania do OpenAI
+    console.log("📡 Wysyłanie zapytania do OpenAI...");
     const aiResponse = await openai.chat.completions.create({
       model: "gpt-4o",
-      messages: openaiHistoryMessages as any, // Cast to 'any' to make it work with OpenAI API
+      messages: openaiHistoryMessages as any,
     });
 
-    const aiMessage = aiResponse.choices[0].message.content ?? "";
-    console.log("🤖 OpenAI odpowiedział:", aiMessage);
+    console.log("🤖 OpenAI odpowiedział:", aiResponse);
+
+    const aiMessage = aiResponse.choices[0]?.message?.content ?? "";
+    console.log("📩 Otrzymana odpowiedź AI:", aiMessage);
 
     // Zapis odpowiedzi AI do bazy
+    console.log("💾 Zapisywanie odpowiedzi AI do bazy...");
     const assistantMessage = await prisma.message.create({
       data: {
         role: "assistant",
@@ -150,15 +162,16 @@ export async function POST(req: NextRequest) {
         userId,
       },
     });
-
     console.log("✅ Odpowiedź AI zapisana:", assistantMessage);
 
     // Pobranie zaktualizowanej historii wiadomości
+    console.log("📥 Pobieranie zaktualizowanej historii wiadomości...");
     const updatedChatHistory = await prisma.message.findMany({
       where: { userId },
       orderBy: { timestamp: "asc" },
     });
 
+    console.log("✅ Zwracanie odpowiedzi użytkownikowi.");
     return NextResponse.json({ messages: updatedChatHistory });
   } catch (error) {
     console.error("❌ Wystąpił błąd:", error);
@@ -168,8 +181,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    console.log("🔵 Otrzymano żądanie GET");
+
     const token = req.cookies.get("token")?.value;
+    console.log("🔑 Pobieranie tokena:", token);
+
     if (!token) {
+      console.log("❌ Brak tokena uwierzytelniającego.");
       return NextResponse.json(
         { error: "Brak tokena uwierzytelniającego." },
         { status: 401 }
@@ -179,15 +197,17 @@ export async function GET(req: NextRequest) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
       userId: string;
     };
-    const userId = decoded.userId;
+    console.log("✅ Token poprawny. Użytkownik:", decoded.userId);
 
-    console.log(`📥 Pobieranie historii czatu dla użytkownika ${userId}`);
-
+    console.log(
+      `📥 Pobieranie historii czatu dla użytkownika ${decoded.userId}`
+    );
     const messages = await prisma.message.findMany({
-      where: { userId },
+      where: { userId: decoded.userId },
       orderBy: { timestamp: "asc" },
     });
 
+    console.log("✅ Historia czatu pobrana:", messages);
     return NextResponse.json({ messages });
   } catch (error) {
     console.error("❌ Błąd pobierania wiadomości:", error);

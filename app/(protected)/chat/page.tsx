@@ -55,15 +55,59 @@ export default function ChatLayout() {
     });
   }
 
-  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
+  async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const filesArray = Array.from(e.target.files);
-    setSelectedFiles((prev) => [...prev, ...filesArray]);
+    const resizedFiles = await Promise.all(filesArray.map(file=>resizeImage(file)));
+    setSelectedFiles((prev) => [...prev, ...resizedFiles]);
     e.target.value = "";
   }
 
   function removeSelectedFile(index: number) {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  }
+  async function resizeImage(file: File, maxWidth = 800, maxHeight = 800) {
+    return new Promise<File>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target?.result as string;
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let { width, height } = img;
+
+          if (width > maxWidth || height > maxHeight) {
+            const scaleFactor = Math.min(maxWidth / width, maxHeight / height);
+            width *= scaleFactor;
+            height *= scaleFactor;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(new File([blob], file.name, { type: "image/jpeg" }));
+              } else {
+                reject(new Error("Nie udało się przeskalować obrazu"));
+              }
+            },
+            "image/jpeg",
+            0.7
+          );
+        };
+
+        img.onerror = reject;
+      };
+
+      reader.onerror = reject;
+    });
   }
 
   async function handleSend() {
@@ -71,24 +115,26 @@ export default function ChatLayout() {
 
     setIsLoading(true);
 
+    const imagePromises = selectedFiles.map(
+      (file) =>
+        new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        })
+    );
+
+    const images = await Promise.all(imagePromises).catch((error) => {
+      console.error("Błąd przetwarzania plików:", error);
+      return [];
+    });
+
     const newMessage: Message = {
       id: "temp",
       role: "user",
       content: textInput.trim() || undefined,
-      images:
-        selectedFiles.length > 0
-          ? await Promise.all(
-              selectedFiles.map(
-                (file) =>
-                  new Promise<string>((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result as string);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                  })
-              )
-            )
-          : undefined,
+      images: images.length > 0 ? images : undefined,
       timestamp: formatTimestamp(),
     };
 
@@ -98,11 +144,13 @@ export default function ChatLayout() {
     setSelectedFiles([]);
 
     try {
-      await fetch("/api/chat", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMessage),
       });
+
+      if (!response.ok) throw new Error("Błąd wysyłania wiadomości");
 
       await fetchMessages();
     } catch (error) {

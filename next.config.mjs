@@ -5,6 +5,11 @@ import withPWA from "next-pwa";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true, // Enable React strict mode for improved error handling
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    }
+  }
 };
 
 export default withPWA({
