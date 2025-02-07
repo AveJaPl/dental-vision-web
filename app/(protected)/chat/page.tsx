@@ -13,7 +13,6 @@ import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineUser } from "react-icons/hi";
 import { X } from "lucide-react"; // do usuwania wybranych zdjęć
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { set } from "zod";
 
 interface Message {
   id: string;
@@ -37,7 +36,7 @@ export default function ChatLayout() {
 
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const [userHasScrolled, setUserHasScrolled] = useState(false);
+  // const [userHasScrolled, setUserHasScrolled] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,11 +192,11 @@ export default function ChatLayout() {
   function handleScroll() {
     if (chatRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
-      if (scrollTop + clientHeight < scrollHeight - 50) {
-        setUserHasScrolled(true);
-      } else {
-        setUserHasScrolled(false);
-      }
+      // if (scrollTop + clientHeight < scrollHeight - 50) {
+      //   setUserHasScrolled(true);
+      // } else {
+      //   setUserHasScrolled(false);
+      // }
       setShowScrollToBottom(scrollTop + clientHeight < scrollHeight - 50);
     }
   }
