@@ -13,6 +13,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineUser } from "react-icons/hi";
 import { X } from "lucide-react"; // do usuwania wybranych zdjęć
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { set } from "zod";
 
 interface Message {
   id: string;
@@ -51,7 +52,12 @@ export default function ChatLayout() {
   }
 
   function formatTimestamp(timestamp: string): string {
-    const date = new Date(timestamp);
+    let date = new Date(timestamp.replace("Z", "")); // Usuwamy 'Z' dla kompatybilności z Safari
+
+    if (isNaN(date.getTime())) {
+      date = new Date();
+    }
+
     return date.toLocaleString("pl-PL", {
       hour: "2-digit",
       minute: "2-digit",
@@ -122,6 +128,7 @@ export default function ChatLayout() {
     if (!textInput.trim() && selectedFiles.length === 0) return;
 
     setIsLoading(true);
+    setSuggestions({ suggestion1: "", suggestion2: "", suggestion3: "" });
 
     const imagePromises = selectedFiles.map(
       (file) =>
@@ -263,15 +270,15 @@ export default function ChatLayout() {
           <button
             onClick={scrollToBottom}
             className={`absolute ${
-              suggestions.suggestion1 ? "bottom-64" : "bottom-28"
+              suggestions.suggestion1 != "" ? "bottom-40" : "bottom-28"
             } left-4 p-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-md transition-all`}
           >
             <AiOutlineArrowDown size={20} />
           </button>
         )}
         {/* Sekcja z sugerowanymi wiadomościami */}
-        <div className="flex py-3 border-t border-primary/50">
-          {suggestions.suggestion1 && (
+        {suggestions.suggestion1 != "" && (
+          <div className="flex py-3 border-t border-primary/50">
             <ScrollArea className="w-full">
               <div className="flex gap-2 overflow-hidden px-2">
                 {Object.values(suggestions).map((suggestion, index) => (
@@ -289,8 +296,8 @@ export default function ChatLayout() {
               </div>
               <ScrollBar orientation="horizontal" className="hidden" />
             </ScrollArea>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Sekcja z inputem */}
         <div className="border-t border-border p-4">
