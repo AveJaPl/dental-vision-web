@@ -205,7 +205,7 @@ export default function ChatLayout() {
     if (!userHasScrolled) {
       scrollToBottom();
     }
-  }, [messages]);
+  }, [messages,userHasScrolled]);
 
   return (
     <div className="w-full flex justify-center">
