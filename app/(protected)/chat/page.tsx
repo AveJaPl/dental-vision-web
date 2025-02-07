@@ -35,8 +35,6 @@ export default function ChatLayout() {
   }>({ suggestion1: "", suggestion2: "", suggestion3: "" });
 
   const chatRef = useRef<HTMLDivElement>(null);
-
-  // const [userHasScrolled, setUserHasScrolled] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -211,10 +209,9 @@ export default function ChatLayout() {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({
         behavior: "smooth",
-        block: "end",
       });
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   return (
     <div className="w-full flex justify-center">
@@ -235,7 +232,7 @@ export default function ChatLayout() {
           {messages.map((message) => (
             <div
               key={message.id}
-              ref={message.id === messages[messages.length - 1].id ? lastMessageRef : null}
+              ref={message.id === messages[messages.length - 1].id && !isLoading ? lastMessageRef : null}
               className={cn(
                 "flex flex-col gap-1 max-w-[80%] p-3 rounded-md relative shadow-sm",
                 message.role === "user"
@@ -277,7 +274,7 @@ export default function ChatLayout() {
           ))}
 
           {isLoading && (
-            <div className="flex items-center gap-2 text-sm text-foreground">
+            <div className="flex items-center gap-2 text-sm text-foreground" ref={lastMessageRef}>
               <Loader2 className="animate-spin" size={20} />
               <span>Dentysta pisze...</span>
             </div>
