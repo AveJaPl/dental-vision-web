@@ -37,6 +37,8 @@ export default function ChatLayout() {
 
   const chatRef = useRef<HTMLDivElement>(null);
 
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
+
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -190,12 +192,19 @@ export default function ChatLayout() {
   function handleScroll() {
     if (chatRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
+      if (scrollTop + clientHeight < scrollHeight - 50) {
+        setUserHasScrolled(true);
+      } else {
+        setUserHasScrolled(false);
+      }
       setShowScrollToBottom(scrollTop + clientHeight < scrollHeight - 50);
     }
   }
 
   useEffect(() => {
-    scrollToBottom();
+    if (!userHasScrolled) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   return (
@@ -278,7 +287,7 @@ export default function ChatLayout() {
         )}
         {/* Sekcja z sugerowanymi wiadomościami */}
         {suggestions.suggestion1 != "" && (
-          <div className="flex py-3 border-t border-primary/50">
+          <div className="flex py-3 border-t border-border">
             <ScrollArea className="w-full">
               <div className="flex gap-2 overflow-hidden px-2">
                 {Object.values(suggestions).map((suggestion, index) => (
