@@ -38,6 +38,7 @@ export default function ChatLayout() {
   const chatRef = useRef<HTMLDivElement>(null);
 
   const [userHasScrolled, setUserHasScrolled] = useState(false);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMessages();
@@ -201,11 +202,20 @@ export default function ChatLayout() {
     }
   }
 
+  // useEffect(() => {
+  //   if (!userHasScrolled) {
+  //     scrollToBottom();
+  //   }
+  // }, [messages,userHasScrolled]);
+
   useEffect(() => {
-    if (!userHasScrolled) {
-      scrollToBottom();
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
-  }, [messages,userHasScrolled]);
+  }, [messages]);
 
   return (
     <div className="w-full flex justify-center">
@@ -226,6 +236,7 @@ export default function ChatLayout() {
           {messages.map((message) => (
             <div
               key={message.id}
+              ref={message.id === messages[messages.length - 1].id ? lastMessageRef : null}
               className={cn(
                 "flex flex-col gap-1 max-w-[80%] p-3 rounded-md relative shadow-sm",
                 message.role === "user"
