@@ -2,180 +2,183 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import OpenAI from "openai";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
+import { zodResponseFormat } from "openai/helpers/zod";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-// Typ dla elementu content, który może zawierać tekst lub obraz
-type ContentItem =
-  | { type: "text"; text: any }
-  | { type: "image_url"; image_url: { url: string } };
+const suggestionResponseSchema = z.object({
+  suggestion1: z.string(),
+  suggestion2: z.string(),
+  suggestion3: z.string(),
+});
+
+const SYSTEM_PROMPT = `Jesteś wirtualnym asystentem dentystycznym. Twoje zadania:
+1. Analizuj pytania i zdjęcia dotyczące zdrowia jamy ustnej.
+2. Udzielaj profesjonalnych, ale prostych i zrozumiałych porad.
+3. Odpowiadaj zwięźle i na temat – nie rozwlekaj odpowiedzi.
+4. Jeśli użytkownik nie poda wystarczających informacji, zadawaj precyzyjne pytania pomocnicze.
+5. Zawsze kończ odpowiedź zachętą do wizyty u stomatologa Implant Medical.
+6. Ignoruj pytania niezwiązane ze stomatologią i przekierowuj rozmowę na temat zdrowia jamy ustnej.`;
+
+function createUserContent(
+  text: string,
+  images?: string[]
+): OpenAI.ChatCompletionContentPart[] {
+  const content: OpenAI.ChatCompletionContentPart[] = [{ type: "text", text }];
+
+  images?.forEach((imageUrl: string) => {
+    content.push({
+      type: "image_url",
+      image_url: { url: imageUrl },
+    });
+  });
+
+  return content;
+}
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("🔵 Otrzymano żądanie POST");
+    console.log("🔵 [POST] Rozpoczęcie żądania");
 
-    // Pobranie tokena z ciasteczek
+    // Weryfikacja tokenu
     const token = req.cookies.get("token")?.value;
-    console.log("🔑 Pobieranie tokena z ciasteczek:", token);
-
     if (!token) {
-      console.log("❌ Brak tokena uwierzytelniającego.");
-      return NextResponse.json(
-        { error: "Brak tokena uwierzytelniającego." },
-        { status: 401 }
-      );
+      console.log("❌ Brak tokenu");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Weryfikacja użytkownika
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-        userId: string;
-      };
-      console.log("✅ Token poprawny. Użytkownik:", decoded.userId);
-    } catch (err) {
-      console.log("❌ Nieprawidłowy token:", err);
-      return NextResponse.json(
-        { error: "Nieprawidłowy token uwierzytelniający." },
-        { status: 401 }
-      );
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      userId: string;
+    };
+    console.log("✅ Użytkownik:", decoded.userId.slice(0, 6));
 
     // Odczytanie danych z żądania
+    // Parsowanie danych
     const { content, images } = await req.json();
-    console.log("📥 Otrzymano dane:", { content, images });
-
-    if (!content && (!images || images.length === 0)) {
-      console.log("❌ Brak treści i obrazów w żądaniu.");
-      return NextResponse.json(
-        { error: "Brak treści i obrazów." },
-        { status: 400 }
-      );
-    }
-
-    const userId = decoded.userId;
-
-    // Zapis wiadomości użytkownika do bazy
-    console.log("💾 Zapisywanie wiadomości użytkownika do bazy...");
-    const userMessage = await prisma.message.create({
-      data: {
-        role: "user",
-        content,
-        images,
-        timestamp: new Date().toISOString(),
-        userId,
-      },
+    console.log("📥 Dane:", {
+      content: content?.slice(0, 50) + (content?.length > 50 ? "..." : ""),
+      images: images?.length || 0,
     });
-    console.log("✅ Wiadomość użytkownika zapisana:", userMessage);
+
+    // Pobranie historii czatu użytkownika ostatnie 10 wiadomości
+    console.log("📜 Pobieranie historii wiadomości...");
+
+    let existingMessages = await prisma.message.findMany({
+      where: { userId: decoded.userId },
+      orderBy: { timestamp: "desc" },
+      take: 10,
+    });
+
+    existingMessages = existingMessages.reverse();
+    console.log("📜 Liczba wiadomości:", existingMessages.length);
+    console.log("🔍 Historia: ", JSON.stringify(existingMessages, null, 4));
+
+    const userMessageData = {
+      role: "user",
+      content,
+      images,
+      timestamp: new Date().toISOString(),
+      userId: decoded.userId,
+    };
 
     // Tworzymy obiekt wiadomości do OpenAI
-    let openaiMessages = [
+    const messages: OpenAI.ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: [
-          {
-            type: "text",
-            text: "Jesteś asystentem medycznym specjalizującym się w analizie zdjęć dentystycznych...",
-          },
-        ],
+        content: SYSTEM_PROMPT,
       },
+      ...existingMessages.map((msg): OpenAI.ChatCompletionMessageParam => {
+        if (msg.role === "user") {
+          return {
+            role: "user",
+            content: createUserContent(msg.content || "", msg.images),
+          };
+        }
+        return {
+          role: "assistant",
+          content: msg.content || "",
+        };
+      }),
       {
         role: "user",
-        content: [{ type: "text", text: content }],
+        content: createUserContent(content, images),
       },
     ];
 
-    // Dodanie obrazów do wiadomości OpenAI
-    if (images && images.length > 0) {
-      console.log(`🖼️ Dodawanie ${images.length} obrazów do wiadomości OpenAI`);
-      images.forEach((imageUrl: string) => {
-        (openaiMessages[1].content as any).push({
-          type: "image_url",
-          image_url: { url: imageUrl },
-        });
-      });
-    } else {
-      console.log("⚠️ Brak obrazów do przetworzenia.");
-    }
-
-    // Pobranie historii czatu użytkownika
-    console.log("📜 Pobieranie historii wiadomości użytkownika...");
-    const chatHistory = await prisma.message.findMany({
-      where: { userId },
-      orderBy: { timestamp: "asc" },
+    // Wywołanie AI
+    console.log("📡 Wywołanie OpenAI...");
+    const start = Date.now();
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages,
     });
+    console.log(`⏱️ Odpowiedź po ${Date.now() - start}ms`);
 
-    console.log("📚 Historia czatu użytkownika:", chatHistory);
+    // Przetwarzanie odpowiedzi
+    const aiMessage = response.choices[0].message;
+    console.log("🤖 Odpowiedź:", aiMessage.content?.slice(0, 100) + "...");
 
-    // Mapowanie historii do formatu OpenAI
-    const openaiHistoryMessages = chatHistory.map((msg) => {
-      const contentArray: ContentItem[] = [
-        { type: "text", text: msg.content || "" },
-      ];
+    // 5. Zapisz obie wiadomości w jednej transakcji
+    const [userMessage, assistantMessage] = await prisma.$transaction([
+      prisma.message.create({ data: userMessageData }),
+      prisma.message.create({
+        data: {
+          role: "assistant",
+          content: aiMessage.content || "",
+          timestamp: new Date().toISOString(),
+          userId: decoded.userId,
+        },
+      }),
+    ]);
+    console.log(
+      "💾 Jednoczesne zapisywanie wiadomości użytkownika i asystenta..."
+    );
+    console.log(
+      "✅ ID wiadomości:",
+      userMessage.id,
+      "\nID wiadomości asystenta:",
+      assistantMessage.id
+    );
 
-      if (msg.images && msg.images.length > 0) {
-        msg.images.forEach((imageUrl: string) => {
-          contentArray.push({
-            type: "image_url",
-            image_url: { url: imageUrl },
-          });
-        });
-      }
+    const fullHistory = [...existingMessages, userMessage, assistantMessage];
 
-      return {
-        role: msg.role as "user" | "assistant" | "system",
-        content: contentArray,
-      };
-    });
-
-    // Dodajemy wiadomość systemową na początku historii
-    openaiHistoryMessages.unshift({
-      role: "system",
-      content: [
+    console.log("💡 Generowanie sugestii...");
+    const suggestionResponse = await openai.beta.chat.completions.parse({
+      model: "gpt-4o",
+      messages: [
         {
-          type: "text",
-          text: `Jesteś wirtualnym asystentem dentystycznym i Twoim zadaniem jest pomaganie użytkownikowi w diagnozowaniu problemów stomatologicznych oraz udzielanie wskazówek dotyczących zdrowia jamy ustnej. Twoja rola ogranicza się wyłącznie do kwestii związanych ze zdrowiem zębów, dziąseł i jamy ustnej. Jeśli użytkownik ma jakiekolwiek dolegliwości lub pytania dotyczące tych obszarów, Twoim celem jest dostarczenie mu pomocnych informacji oraz ewentualne zasugerowanie wizyty u stomatologa. Możesz analizować zdjęcia i wskazywać potencjalne problemy, takie jak próchnica, stan zapalny dziąseł, obrzęki i inne nieprawidłowości. Pamiętaj, że Twoje porady mają charakter ogólny i nie zastępują konsultacji lekarskiej. Zachęcaj użytkownika do wizyty w gabinecie stomatologicznym, np. Implant Medical, w celu dokładnej diagnozy i leczenia. Nie udzielaj informacji na tematy niezwiązane z dentystyką.`,
+          role: "system",
+          content:
+            "Jesteś asystentem, który generuje gotowe odpowiedzi użytkownika, które może on kliknąć, aby kontynuować rozmowę. Sugestie powinny być krótkie i zgodne z kontekstem rozmowy.",
+        },
+        {
+          role: "user",
+          content: `Na podstawie tej konwersacji wygeneruj sugestie: ${fullHistory
+            .map((msg) => `${msg.role}: ${msg.content}`)
+            .join("\n")}`,
         },
       ],
+      response_format: zodResponseFormat(
+        suggestionResponseSchema,
+        "suggestion"
+      ),
     });
 
-    console.log("📡 Wysyłanie zapytania do OpenAI...");
-    const aiResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: openaiHistoryMessages as any,
+    const suggestions = suggestionResponse.choices[0].message.parsed;
+
+    return NextResponse.json({
+      messages: fullHistory,
+      suggestions,
     });
-
-    console.log("🤖 OpenAI odpowiedział:", aiResponse);
-
-    const aiMessage = aiResponse.choices[0]?.message?.content ?? "";
-    console.log("📩 Otrzymana odpowiedź AI:", aiMessage);
-
-    // Zapis odpowiedzi AI do bazy
-    console.log("💾 Zapisywanie odpowiedzi AI do bazy...");
-    const assistantMessage = await prisma.message.create({
-      data: {
-        role: "assistant",
-        content: aiMessage,
-        timestamp: new Date().toISOString(),
-        userId,
-      },
-    });
-    console.log("✅ Odpowiedź AI zapisana:", assistantMessage);
-
-    // Pobranie zaktualizowanej historii wiadomości
-    console.log("📥 Pobieranie zaktualizowanej historii wiadomości...");
-    const updatedChatHistory = await prisma.message.findMany({
-      where: { userId },
-      orderBy: { timestamp: "asc" },
-    });
-
-    console.log("✅ Zwracanie odpowiedzi użytkownikowi.");
-    return NextResponse.json({ messages: updatedChatHistory });
   } catch (error) {
-    console.error("❌ Wystąpił błąd:", error);
-    return NextResponse.json({ error: "Błąd serwera" }, { status: 500 });
+    console.error("❌ Krytyczny błąd:", error);
+    return NextResponse.json(
+      { error: "Wewnętrzny błąd serwera" },
+      { status: 500 }
+    );
   }
 }
 
@@ -207,7 +210,7 @@ export async function GET(req: NextRequest) {
       orderBy: { timestamp: "asc" },
     });
 
-    console.log("✅ Historia czatu pobrana:", messages);
+    // console.log("✅ Historia czatu pobrana:", messages);
     return NextResponse.json({ messages });
   } catch (error) {
     console.error("❌ Błąd pobierania wiadomości:", error);

@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react"; // Spinner
 import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineUser } from "react-icons/hi";
 import { X } from "lucide-react"; // do usuwania wybranych zdjęć
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface Message {
   id: string;
@@ -27,6 +28,11 @@ export default function ChatLayout() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const [suggestions, setSuggestions] = useState<{
+    suggestion1: string;
+    suggestion2: string;
+    suggestion3: string;
+  }>({ suggestion1: "", suggestion2: "", suggestion3: "" });
 
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -44,21 +50,23 @@ export default function ChatLayout() {
     }
   }
 
-  function formatTimestamp(): string {
-    return new Date().toLocaleString("pl-PL", {
+  function formatTimestamp(timestamp: string): string {
+    const date = new Date(timestamp);
+    return date.toLocaleString("pl-PL", {
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
       day: "2-digit",
       month: "2-digit",
-      year: "numeric",
+      year: "2-digit",
     });
   }
 
   async function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const filesArray = Array.from(e.target.files);
-    const resizedFiles = await Promise.all(filesArray.map(file=>resizeImage(file)));
+    const resizedFiles = await Promise.all(
+      filesArray.map((file) => resizeImage(file))
+    );
     setSelectedFiles((prev) => [...prev, ...resizedFiles]);
     e.target.value = "";
   }
@@ -135,7 +143,7 @@ export default function ChatLayout() {
       role: "user",
       content: textInput.trim() || undefined,
       images: images.length > 0 ? images : undefined,
-      timestamp: formatTimestamp(),
+      timestamp: formatTimestamp(new Date().toISOString()),
     };
 
     setMessages((prev) => [...prev, newMessage]);
@@ -151,8 +159,11 @@ export default function ChatLayout() {
       });
 
       if (!response.ok) throw new Error("Błąd wysyłania wiadomości");
-
-      await fetchMessages();
+      const data = await response.json();
+      console.log("Odpowiedź serwera:", data);
+      console.log("suggestions", data.suggestions);
+      setMessages(data.messages);
+      setSuggestions(data.suggestions);
     } catch (error) {
       console.error("Błąd wysyłania wiadomości:", error);
     }
@@ -214,7 +225,7 @@ export default function ChatLayout() {
                 )}
                 <span className="text-xs opacity-80">
                   {message.role === "user" ? "Ty" : "Dentysta"} •{" "}
-                  {message.timestamp}
+                  {formatTimestamp(message.timestamp)}
                 </span>
               </div>
               {message.content && (
@@ -251,15 +262,39 @@ export default function ChatLayout() {
         {showScrollToBottom && (
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-28 left-4 p-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-md transition-all"
+            className={`absolute ${
+              suggestions.suggestion1 ? "bottom-64" : "bottom-28"
+            } left-4 p-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-md transition-all`}
           >
             <AiOutlineArrowDown size={20} />
           </button>
         )}
+        {/* Sekcja z sugerowanymi wiadomościami */}
+        <div className="flex py-3 border-t border-primary/50">
+          {suggestions.suggestion1 && (
+            <ScrollArea className="w-full">
+              <div className="flex gap-2 overflow-hidden px-2">
+                {Object.values(suggestions).map((suggestion, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => {
+                      setTextInput(suggestion);
+                    }}
+                    variant="outline"
+                    className="text-xs tracking-tight px-3 py-1 border-primary/50 text-primary hover:bg-primary/10 hover:text-primary transition rounded-md"
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" className="hidden" />
+            </ScrollArea>
+          )}
+        </div>
 
         {/* Sekcja z inputem */}
         <div className="border-t border-border p-4">
-          {/*Podgląd wybranych zdjęć*/}
+          {/* Podgląd wybranych zdjęć */}
           {selectedFiles.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto">
               {selectedFiles.map((file, idx) => {
@@ -285,6 +320,7 @@ export default function ChatLayout() {
             </div>
           )}
 
+          {/* Pole tekstowe i przyciski */}
           <div className="flex items-center gap-2">
             <Textarea
               placeholder="Napisz wiadomość..."
