@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MotionDiv } from "@/app/components/small/MotionDiv";
+import { MotionDiv } from "@/app/components/small/Motion";
 import { AnimatePresence } from "framer-motion";
 import {
   Card,

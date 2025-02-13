@@ -20,9 +20,7 @@ import {
   FaBook,
   FaShieldAlt,
 } from "react-icons/fa";
-import { MotionDiv } from "@/app/components/small/MotionDiv";
-
-
+import { MotionDiv } from "@/app/components/small/Motion";
 
 export default function Dashboard() {
   const [showMore, setShowMore] = useState(false);
@@ -31,6 +29,83 @@ export default function Dashboard() {
   const handleRedirect = (path: string) => () => {
     redirect(path);
   };
+
+  const mainOptions = [
+    {
+      title: "Ankieta",
+      icon: FaClipboardList,
+      link: "/survey",
+    },
+    {
+      title: "Diagnostyka",
+      icon: FaBolt,
+      link: "/diagnostics",
+    },
+    {
+      title: "Konsultacja",
+      icon: FaUserMd,
+      link: "/consultation",
+    },
+    {
+      title: "Wizyta",
+      icon: FaCalendarCheck,
+      link: "/visit",
+    },
+    {
+      title: "Historia",
+      icon: FaHistory,
+      link: "/history",
+    },
+    {
+      title: "Profil",
+      icon: FaUser,
+      link: "/profile",
+    },
+    {
+      title: "Edukacja",
+      icon: FaBook,
+      link: "/education",
+    },
+    {
+      title: "Ubezpieczenia",
+      icon: FaShieldAlt,
+      link: "/insurance",
+    },
+  ];
+
+  const recommendations = [
+    {
+      title: "Zalecenia dietetyczne",
+      link: "/diet",
+    },
+    {
+      title: "Proces gojenia",
+      link: "/healing",
+    },
+    {
+      title: "Zalecenia lekowe",
+      link: "/medicine",
+    },
+    {
+      title: "Ciekawostki stomatologiczne",
+      link: "/funfacts",
+    },
+  ];
+
+  const calendar = [
+    {
+      title: "Poniedziałek",
+      content: "Mycie zębów 2x dziennie",
+    },
+    {
+      title: "Wtorek",
+      content: "Unikaj słodyczy",
+    },
+    {
+      title: "Środa",
+      content: "Płukanie jamy ustnej płynem",
+    },
+  ];
 
   return (
     <div className="space-y-8 bg-white">
@@ -63,19 +138,23 @@ export default function Dashboard() {
         </Card>
 
         <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-            <FaClipboardList size={24} className="text-primary" />
-            <h3 className="text-sm font-medium text-gray-700 text-end">
-              Ankieta
-            </h3>
-          </Card>
-
-          <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-            <FaBolt size={24} className="text-primary" />
-            <h3 className="text-sm font-medium text-gray-700 text-end">
-              Diagnostyka
-            </h3>
-          </Card>
+          {
+            // Main first two options
+            mainOptions.slice(0, 2).map((option, index) => (
+              <Card
+                key={index}
+                className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center"
+                onClick={handleRedirect(option.link)}
+              >
+                {/* Icon */}
+                <option.icon size={24} className="text-primary" />
+                {/* Title */}
+                <h3 className="text-sm font-medium text-gray-700 text-end">
+                  {option.title}
+                </h3>
+              </Card>
+            ))
+          }
         </div>
 
         {/* Button to show/hide */}
@@ -101,47 +180,23 @@ export default function Dashboard() {
               className="overflow-hidden"
             >
               <div className="grid grid-cols-2 gap-4 mt-2">
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-                  <FaUserMd size={24} className="text-primary" />
-                  <h3 className="text-sm font-medium text-gray-700 text-end">
-                    Konsultacja
-                  </h3>
-                </Card>
-
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-                  <FaCalendarCheck size={24} className="text-primary" />
-                  <h3 className="text-sm font-medium text-gray-700 text-end">
-                    Wizyta
-                  </h3>
-                </Card>
-
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-                  <FaHistory size={24} className="text-primary" />
-                  <h3 className="text-sm font-medium text-gray-700 text-end">
-                    Historia
-                  </h3>
-                </Card>
-
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-                  <FaUser size={24} className="text-primary" />
-                  <h3 className="text-sm font-medium text-gray-700 text-end">
-                    Profil
-                  </h3>
-                </Card>
-
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-                  <FaBook size={24} className="text-primary" />
-                  <h3 className="text-sm font-medium text-gray-700 text-end">
-                    Edukacja
-                  </h3>
-                </Card>
-
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center">
-                  <FaShieldAlt size={24} className="text-primary" />
-                  <h3 className="text-sm font-medium text-gray-700 text-end">
-                    Ubezpieczenia
-                  </h3>
-                </Card>
+                {
+                  // Main options
+                  mainOptions.slice(2).map((option, index) => (
+                    <Card
+                      key={index}
+                      className="bg-gradient-to-br bg-background rounded-lg p-5 transform transition-transform duration-300 hover:scale-105 flex justify-between items-center"
+                      onClick={handleRedirect(option.link)}
+                    >
+                      {/* Icon */}
+                      <option.icon size={24} className="text-primary" />
+                      {/* Title */}
+                      <h3 className="text-sm font-medium text-gray-700 text-end">
+                        {option.title}
+                      </h3>
+                    </Card>
+                  ))
+                }
               </div>
             </MotionDiv>
           )}
@@ -205,41 +260,22 @@ export default function Dashboard() {
               className="overflow-hidden"
             >
               <div className="grid grid-cols-2 gap-3 mt-2">
-                {/* Zalecenia dietetyczne */}
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-3 transform transition-transform duration-300 hover:scale-105 flex items-center justify-center">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-sm text-center text-gray-600">
-                      Zalecenia dietetyczne
-                    </CardTitle>
-                  </CardHeader>
-                </Card>
-
-                {/* Proces gojenia */}
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-3 transform transition-transform duration-300 hover:scale-105 flex items-center justify-center">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-sm text-center text-gray-600">
-                      Proces gojenia
-                    </CardTitle>
-                  </CardHeader>
-                </Card>
-
-                {/* Zalecenia lekowe */}
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-3 transform transition-transform duration-300 hover:scale-105 flex items-center justify-center">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-sm text-center text-gray-600">
-                      Zalecenia lekowe
-                    </CardTitle>
-                  </CardHeader>
-                </Card>
-
-                {/* Ciekawostki stomatologiczne */}
-                <Card className="bg-gradient-to-br bg-background rounded-lg p-3 transform transition-transform duration-300 hover:scale-105 flex items-center justify-center">
-                  <CardHeader className="p-0">
-                    <CardTitle className="text-sm text-center text-gray-600">
-                      Ciekawostki stomatologiczne
-                    </CardTitle>
-                  </CardHeader>
-                </Card>
+                {
+                  // Recommendations
+                  recommendations.map((option, index) => (
+                    <Card
+                      key={index}
+                      className="bg-gradient-to-br bg-background rounded-lg p-3 transform transition-transform duration-300 hover:scale-105 flex items-center justify-center"
+                      onClick={handleRedirect(option.link)}
+                    >
+                      <CardHeader className="p-0">
+                        <CardTitle className="text-sm text-center text-gray-600">
+                          {option.title}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                  ))
+                }
               </div>
             </MotionDiv>
           )}
@@ -263,11 +299,7 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-2">
-          {[
-            { title: "Poniedziałek", content: "Mycie zębów 2x dziennie" },
-            { title: "Wtorek", content: "Unikaj słodyczy" },
-            { title: "Środa", content: "Płukanie jamy ustnej płynem" },
-          ].map((tile, index) => (
+          {calendar.map((tile, index) => (
             <Card
               key={index}
               className="bg-gradient-to-br bg-background rounded-lg p-3 transform transition-transform duration-300 hover:scale-105 text-center"

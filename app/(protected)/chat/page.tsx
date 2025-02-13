@@ -190,20 +190,9 @@ export default function ChatLayout() {
   function handleScroll() {
     if (chatRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
-      // if (scrollTop + clientHeight < scrollHeight - 50) {
-      //   setUserHasScrolled(true);
-      // } else {
-      //   setUserHasScrolled(false);
-      // }
       setShowScrollToBottom(scrollTop + clientHeight < scrollHeight - 50);
     }
   }
-
-  // useEffect(() => {
-  //   if (!userHasScrolled) {
-  //     scrollToBottom();
-  //   }
-  // }, [messages,userHasScrolled]);
 
   useEffect(() => {
     if (lastMessageRef.current) {
@@ -232,7 +221,6 @@ export default function ChatLayout() {
           {messages.map((message) => (
             <div
               key={message.id}
-              ref={message.id === messages[messages.length - 1].id && !isLoading ? lastMessageRef : null}
               className={cn(
                 "flex flex-col gap-1 max-w-[80%] p-3 rounded-md relative shadow-sm",
                 message.role === "user"
@@ -274,11 +262,13 @@ export default function ChatLayout() {
           ))}
 
           {isLoading && (
-            <div className="flex items-center gap-2 text-sm text-foreground" ref={lastMessageRef}>
+            <div className="flex items-center gap-2 text-sm text-foreground">
               <Loader2 className="animate-spin" size={20} />
               <span>Dentysta pisze...</span>
             </div>
           )}
+
+          <div className="p-0 h-0 !m-0" ref={lastMessageRef}></div>
         </div>
 
         {/* Guzik scroll-to-bottom */}
