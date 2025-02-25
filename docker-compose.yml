@@ -35,4 +35,5 @@ services:
       - database
     working_dir: /app
     command: sh -c "npx prisma generate && npm run dev"
+    restart: always
 
